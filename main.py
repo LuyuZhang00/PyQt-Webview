@@ -1,4 +1,6 @@
 import psycopg2
+from PyQt5.QtCore import QPoint
+
 from LoginUI import *
 from InterfaceUI import *
 import webbrowser
@@ -6,9 +8,43 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 import sys
 
 user_now = ""
-class LoginWindow(QMainWindow):
+class MoveWindow(QMainWindow):
+    """
+    重写鼠标事件，实现窗口拖动
+    """
     def __init__(self):
         super().__init__()
+        self.oldPos = self.pos()
+    def mousePressEvent(self, event):
+        """
+        鼠标点击事件
+        :param event:
+        :return:
+        """
+        self.oldPos = event.globalPos()
+
+    def mouseMoveEvent(self, event):
+
+        """
+        鼠标移动事件
+        :param event:
+        :return:
+        """
+        delta = QPoint(event.globalPos() - self.oldPos)
+        self.move(self.x() + delta.x(), self.y() + delta.y())
+        self.oldPos = event.globalPos()
+
+# class LoginWindow(QMainWindow):
+class LoginWindow(MoveWindow):
+    """
+    登录界面
+    """
+    def __init__(self):
+        """
+        初始化
+        """
+        super().__init__()
+
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)               # 调用Ui_MainWindow类中的setupUi方法，创建界面
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)    # 设置窗口无边框
@@ -18,6 +54,7 @@ class LoginWindow(QMainWindow):
         self.shadow.setBlurRadius(10)   # 设置阴影半径
         self.shadow.setColor(QtCore.Qt.black)  # 设置阴影颜色
         self.ui.frame.setGraphicsEffect(self.shadow)  # 在frame上添加阴影
+        # self.oldPos = self.pos()
 
         self.ui.pushButton_login.clicked.connect(lambda :self.ui.stackedWidget_2.setCurrentIndex(0))
         self.ui.pushButton_register.clicked.connect(self.pushButton_registerview)
@@ -27,10 +64,18 @@ class LoginWindow(QMainWindow):
         self.show()
 
     def pushButton_registerview(self):
+        """
+        注册界面
+        :return:
+        """
         self.ui.stackedWidget_2.setCurrentIndex(1)
         self.ui.stackedWidget.setCurrentIndex(0)
 
     def login_in(self):
+        """
+        登录
+        :return:
+        """
         account = self.ui.lineEdit_l_account.text()
         password = self.ui.lineEdit_l_passward.text()
         print(account, password)
@@ -60,6 +105,10 @@ class LoginWindow(QMainWindow):
             else:
                 self.ui.stackedWidget.setCurrentIndex(2)
     def register_in(self):
+        """
+        注册
+        :return:
+        """
         account = self.ui.lineEdit_d_account.text()
         password = self.ui.lineEdit_d_passward.text()
         password_sure = self.ui.lineEdit_d_rpassward.text()
@@ -76,8 +125,25 @@ class LoginWindow(QMainWindow):
             self.ui.stackedWidget_2.setCurrentIndex(3)
             print("修改成功")
 
-class MyWindow(QMainWindow):
+
+
+    # def mousePressEvent(self, event):
+    #     self.oldPos = event.globalPos()
+    #
+    # def mouseMoveEvent(self, event):
+    #     delta = QPoint(event.globalPos() - self.oldPos)
+    #     self.move(self.x() + delta.x(), self.y() + delta.y())
+    #     self.oldPos = event.globalPos()
+
+# class MyWindow(QMainWindow):
+class MyWindow(MoveWindow):
+    """
+    主界面
+    """
     def __init__(self):
+        """
+        初始化
+        """
         super().__init__()
         self.ui = Ui_MyWindow()
         self.ui.setupUi(self)
@@ -96,6 +162,10 @@ class MyWindow(QMainWindow):
         self.ui.pushButton_4.clicked.connect(self.change_password)
         self.show()
     def gp_web(self):
+        """
+        网页浏览
+        :return:
+        """
         self.ui.stackedWidget.setCurrentIndex(1)
         self.ui.pushButton_bilibili.clicked.connect(lambda :webbrowser.open("https://www.bilibili.com/"))
         self.ui.pushButton_csdn.clicked.connect(lambda :webbrowser.open("https://blog.csdn.net/"))
@@ -103,12 +173,20 @@ class MyWindow(QMainWindow):
         self.ui.pushButton_apple.clicked.connect(lambda :webbrowser.open("https://www.apple.com/cn/"))
 
     def log_out(self):
+        """
+        退出登录
+        :return:
+        """
         global user_now
         self.close()
         self.login = LoginWindow()
         user_now = ""
 
     def change_password(self):
+        """"
+        修改密码
+        :return:
+        """
         global user_now
         password=self.ui.lineEdit_m_pass.text()
         if len(self.ui.lineEdit_m_pass.text()) == 0 or len(self.ui.lineEdit_m_pass_sure.text()) == 0:
@@ -125,6 +203,10 @@ class MyWindow(QMainWindow):
             print("修改成功")
 
 if __name__ == "__main__":
+    """
+    主函数
+    
+    """
     app = QApplication(sys.argv)
     w = LoginWindow()
     # w = MyWindow()
