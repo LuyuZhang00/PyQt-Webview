@@ -76,8 +76,6 @@ class LoginWindow(QMainWindow):
             self.ui.stackedWidget_2.setCurrentIndex(3)
             print("修改成功")
 
-
-
 class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
