@@ -10,21 +10,26 @@ class LoginWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
-        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.shadow = QtWidgets.QGraphicsDropShadowEffect(self)
-        self.shadow.setOffset(5, 5)
-        self.shadow.setBlurRadius(10)
-        self.shadow.setColor(QtCore.Qt.black)
-        self.ui.frame.setGraphicsEffect(self.shadow)
+        self.ui.setupUi(self)               # 调用Ui_MainWindow类中的setupUi方法，创建界面
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)    # 设置窗口无边框
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)  # 设置窗口背景透明
+        self.shadow = QtWidgets.QGraphicsDropShadowEffect(self)  # 设置窗口阴影
+        self.shadow.setOffset(5, 5)       # 设置阴影偏移
+        self.shadow.setBlurRadius(10)   # 设置阴影半径
+        self.shadow.setColor(QtCore.Qt.black)  # 设置阴影颜色
+        self.ui.frame.setGraphicsEffect(self.shadow)  # 在frame上添加阴影
 
         self.ui.pushButton_login.clicked.connect(lambda :self.ui.stackedWidget_2.setCurrentIndex(0))
-        self.ui.pushButton_register.clicked.connect(lambda :self.ui.stackedWidget_2.setCurrentIndex(1))
+        self.ui.pushButton_register.clicked.connect(self.pushButton_registerview)
         self.ui.pushButton_l_sure.clicked.connect(self.login_in)
         self.ui.pushButton_d_sure.clicked.connect(self.register_in)
 
         self.show()
+
+    def pushButton_registerview(self):
+        self.ui.stackedWidget_2.setCurrentIndex(1)
+        self.ui.stackedWidget.setCurrentIndex(0)
+
     def login_in(self):
         account = self.ui.lineEdit_l_account.text()
         password = self.ui.lineEdit_l_passward.text()
@@ -57,7 +62,7 @@ class LoginWindow(QMainWindow):
     def register_in(self):
         account = self.ui.lineEdit_d_account.text()
         password = self.ui.lineEdit_d_passward.text()
-        password_sure = self.ui.lineEdit_d_rpassword.text()
+        password_sure = self.ui.lineEdit_d_rpassward.text()
         if len(account)==0 or len(password)==0 or len(password_sure)==0:
             self.ui.stackedWidget.setCurrentIndex(1)
         elif password != password_sure:
